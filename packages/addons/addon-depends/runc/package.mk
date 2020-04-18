@@ -8,7 +8,7 @@ PKG_SHA256="28378df983a3c586ed3ec8c76a774a9b10f36a0c323590a284b801cce95cc61f"
 PKG_LICENSE="APL"
 PKG_SITE="https://github.com/opencontainers/runc"
 PKG_URL="https://github.com/opencontainers/runc/archive/v${PKG_VERSION}.tar.gz"
-PKG_DEPENDS_TARGET="toolchain go:host"
+PKG_DEPENDS_TARGET="toolchain go:host libseccomp:host conmon"
 PKG_LONGDESC="A CLI tool for spawning and running containers according to the OCI specification."
 PKG_TOOLCHAIN="manual"
 
@@ -19,6 +19,11 @@ pre_make_target() {
   go_configure
 
   export LDFLAGS="-w -extldflags -static -X main.gitCommit=${PKG_GIT_COMMIT} -X main.version=$(cat ./VERSION) -extld $CC"
+  export GOLANG=$TOOLCHAIN/lib/golang/bin/go
+  export GOPATH=$PKG_BUILD/.gopath
+  export GOROOT=$TOOLCHAIN/lib/golang
+  export BUILDTAGS="selinux seccomp"
+  export PATH=$PATH:$GOROOT/bin
 
   mkdir -p ${GOPATH}
   if [ -d $PKG_BUILD/vendor ]; then
@@ -30,5 +35,10 @@ pre_make_target() {
 
 make_target() {
   mkdir -p bin
-  $GOLANG build -v -o bin/runc -a -tags "cgo static_build" -ldflags "$LDFLAGS" ./
+  $GOLANG build -v -o bin/runc -a -tags "cgo static_build" -ldflags "$LDFLAGS" -tags "$(BUILDTAGS)" ./
+}
+
+makeinstall_target() {
+  mkdir -p $INSTALL/usr/bin
+    cp $PKG_BUILD/bin/runc $INSTALL/usr/bin
 }

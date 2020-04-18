@@ -1,5 +1,10 @@
 BUILD_DIRS=build.*
 
+export PROJECT=RPi
+export DEVICE=RPi2
+export ARCH=arm
+export DISTRO=custom
+
 all: release
 
 system:
@@ -10,6 +15,9 @@ release:
 
 image:
 	./scripts/image mkimage
+
+info:
+	./scripts/info
 
 noobs:
 	./scripts/image noobs

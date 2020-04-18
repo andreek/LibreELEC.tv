@@ -24,5 +24,5 @@ post_makeinstall_target() {
   rm -rf $INSTALL
 
   # delete the shared library as we only want static
-  rm $SYSROOT_PREFIX/usr/lib/libarchive.so*
+#  rm $SYSROOT_PREFIX/usr/lib/libarchive.so*
 }

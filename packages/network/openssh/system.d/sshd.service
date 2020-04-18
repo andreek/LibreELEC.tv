@@ -3,6 +3,7 @@ Description=OpenSSH server daemon
 After=network.target
 ConditionKernelCommandLine=|ssh
 ConditionPathExists=|/storage/.cache/services/sshd.conf
+Wants=network-online.target
 
 [Service]
 Restart=on-failure
